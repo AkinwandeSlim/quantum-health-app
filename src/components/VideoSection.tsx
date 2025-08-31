@@ -1,11 +1,14 @@
-
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Play } from "lucide-react";
 import { useVideos } from "@/hooks/useVideos";
 import { useSiteInfo } from "@/hooks/useSiteInfo";
 
 const VideoSection = () => {
   const { videos, loading: videosLoading } = useVideos();
   const { siteInfo, loading: siteInfoLoading } = useSiteInfo();
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
 
   if (videosLoading || siteInfoLoading) {
     return (
@@ -47,30 +50,55 @@ const VideoSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {videos.map((video) => (
-            <Card key={video.id} className="shadow-2xl">
+            <Card key={video.id} className="shadow-2xl overflow-hidden">
               <CardContent className="p-0">
-                <div className="relative aspect-video rounded-lg overflow-hidden">
-                  <iframe
-                    src={video.url}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  ></iframe>
+                <div
+                  className="relative w-full h-48 bg-gray-200 flex items-center justify-center cursor-pointer"
+                  onClick={() => setSelectedVideo(video)}
+                >
+                  <Play className="h-12 w-12 text-white bg-green-600/80 rounded-full p-3" />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-green-800">{video.title}</h3>
+                  <h3 className="text-lg font-semibold text-green-800 truncate">{video.title}</h3>
+                  {video.duration && (
+                    <p className="text-gray-600 text-sm">Duration: {video.duration}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>{selectedVideo?.title}</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4">
+              {selectedVideo?.type === 'url' && (selectedVideo.url.includes('youtube.com') || selectedVideo.url.includes('youtu.be')) ? (
+                <iframe
+                  src={selectedVideo.url}
+                  className="w-full aspect-video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={selectedVideo?.url}
+                  controls
+                  autoPlay
+                  className="w-full max-h-[60vh] bg-black"
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
 };
 
 export default VideoSection;
+

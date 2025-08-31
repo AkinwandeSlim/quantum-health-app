@@ -121,6 +121,8 @@ export type Database = {
           title: string
           updated_at: string
           url: string
+          type: 'url' | 'upload'
+          duration: string | null
         }
         Insert: {
           created_at?: string
@@ -128,6 +130,8 @@ export type Database = {
           title: string
           updated_at?: string
           url: string
+          type: 'url' | 'upload'
+          duration: string | null
         }
         Update: {
           created_at?: string
@@ -135,6 +139,8 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string
+          type: 'url' | 'upload'
+          duration: string | null
         }
         Relationships: []
       }
