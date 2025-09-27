@@ -6,6 +6,8 @@ import { useProducts } from "@/hooks/useProducts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import ProductForm from "@/components/ProductForm";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const IncludedSection = () => {
   const { products, loading, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -153,9 +155,11 @@ const IncludedSection = () => {
                       {product.title}
                     </h3>
                     {product.description && (
-                      <p className="text-gray-600 mb-4">
-                        {product.description}
-                      </p>
+                      <div className="prose prose-sm max-w-none text-gray-600 mb-4">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {product.description}
+                        </ReactMarkdown>
+                      </div>
                     )}
                     
                     {product.video_url && (
